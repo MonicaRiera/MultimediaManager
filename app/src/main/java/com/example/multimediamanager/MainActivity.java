@@ -1,22 +1,24 @@
 package com.example.multimediamanager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.multimediamanager.R;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnPreparedListener {
 
-    private MediaPlayer player;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,37 +31,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnStop.setOnClickListener(this);
         final Button btnSound = findViewById(R.id.activity_main__btn__sound);
         btnSound.setOnClickListener(this);
-        final Button btnService = findViewById(R.id.activity_main__btn__service);
-        btnService.setOnClickListener(this);
+        final Button btnPlayInService = findViewById(R.id.activity_main__btn__service);
+        btnPlayInService.setOnClickListener(this);
 
-        player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
+        // option 1:
+//        mediaPlayer = MediaPlayer.create(this, R.raw.bensoundbrazilsamba);
 
-        //option 2
-        AssetFileDescriptor ins = getResources().openRawResourceFd(R.raw.bensoundcountryboy);
+        // option 2:
+        AssetFileDescriptor ins = getResources().openRawResourceFd(R.raw.bensoundpsychedelic);
         try {
-            player.setDataSource(ins.getFileDescriptor());
+            mediaPlayer.setDataSource(ins.getFileDescriptor());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        player.setOnPreparedListener(this);
+        mediaPlayer.setOnPreparedListener(this);
     }
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.activity_main__btn__play:
-                if (player.isPlaying()) {
-                    player.stop();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
                 }
-                player.prepareAsync();
+                mediaPlayer.prepareAsync();
                 break;
             case R.id.activity_main__btn__stop:
-                if (player.isPlaying()) {
-                    player.stop();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
                 }
                 break;
             case R.id.activity_main__btn__sound:
@@ -73,13 +76,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 break;
             case R.id.activity_main__btn__service:
-
+                Intent intent = new Intent(this, MyMultimediaService.class);
+                startService(intent);
                 break;
-                default:
-
+            default:
         }
     }
 
@@ -87,4 +89,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onPrepared(MediaPlayer mp) {
         mp.start();
     }
+
 }
