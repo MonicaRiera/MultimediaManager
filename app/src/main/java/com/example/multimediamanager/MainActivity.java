@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,11 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         player = new MediaPlayer();
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        //option 1
-        //player = MediaPlayer.create(this, R.raw.bensoundbrazilsamba);
 
         //option 2
-        AssetFileDescriptor ins = getResources().openRawResourceFd(R.raw.bensoundbrazilsamba);
+        AssetFileDescriptor ins = getResources().openRawResourceFd(R.raw.bensoundcountryboy);
         try {
             player.setDataSource(ins.getFileDescriptor());
         } catch (IOException e) {
@@ -51,16 +52,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.activity_main__btn__play:
+                if (player.isPlaying()) {
+                    player.stop();
+                }
                 player.prepareAsync();
                 break;
             case R.id.activity_main__btn__stop:
+                if (player.isPlaying()) {
+                    player.stop();
+                }
                 break;
             case R.id.activity_main__btn__sound:
+                Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                MediaPlayer mediaPlayerSound = new MediaPlayer();
+                mediaPlayerSound.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+                try {
+                    mediaPlayerSound.setDataSource(this, ringtoneUri);
+                    mediaPlayerSound.setOnPreparedListener(this);
+                    mediaPlayerSound.prepareAsync();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case R.id.activity_main__btn__service:
+
                 break;
                 default:
-                    break;
+
         }
     }
 
